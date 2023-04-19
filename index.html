@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>To-do List Learning English</title>
+</head>
+<body>
+    <div class="app">
+        <div>
+            <div class="flex-center">
+                <h1>Todo List</h1>
+            </div>
+            <div class="flex-center">
+                <div>
+                    <div class="date">Today</div>
+                    <input type="date" name="" id="" class="input-date" >
+                    <div class="list-task">
+                        <div>
+                            <input type="checkbox" name="0" id="0">
+                            <label for="0">Wake up early and listen to a podcast in English</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="1" id="1">
+                            <label for="1">Read a book or article in English for 30 minutes</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="2" id="2">
+                            <label for="2">Watch a movie or TV show in English with subtitles</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="3" id="3">
+                            <label for="3">Take a break and practice writing in English for 15 minutes.</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="4" id="4">
+                            <label for="4">Have a conversation with a native English speaker.</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="5" id="5">
+                            <label for="5">Listen to English music and try to sing along</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="6" id="6">
+                            <label for="6">Take a break and practice speaking in English for 15 minutes</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="7" id="7">
+                            <label for="7">Play a game in English with friends or family.</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="8" id="8">
+                            <label for="8">Take a break and practice listening in English for 15 minutes</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="9" id="9">
+                            <label for="9">Review the words and phrases you learned throughout the day.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    var date;
+
+    function formattedDate(date) {
+         // Get the year, month, and day from the date object
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1 and pad with leading zeros if necessary
+        const day = String(date.getDate()).padStart(2, '0'); // Pad day with leading zeros if necessary
+
+        // Concatenate the year, month, and day with hyphens to form the formatted date string
+        const formattedDate = `${year}-${month}-${day}`;
+
+        return formattedDate
+    }
+    
+
+    window.onload = function() {
+        console.log('start')
+        const arrTask = document.querySelectorAll(".list-task > div > input")
+        const renderDate = document.querySelector(".date")
+
+        // get todo-list
+        let arrStorage = localStorage.getItem('todo-list');
+        if(arrStorage) {
+            arrStorage = JSON.parse(arrStorage)
+        } else {
+            arrStorage = {}
+            localStorage.setItem('todo-list', JSON.stringify(arrStorage))
+        }
+
+        // Create a new date object
+        date = formattedDate(new Date());
+        console.log(date)
+
+        const inputDate = document.querySelector('.input-date')
+        inputDate.value = date
+        
+
+        if(arrStorage[date]) {
+            arrTask.forEach((item, i) => {
+                console.log(item, i)
+                item.checked = arrStorage[date][i]
+            })
+        } else {
+            arrStorage[date] = new Array(arrTask.length).fill(0)
+            localStorage.setItem('todo-list', JSON.stringify(arrStorage))
+        }
+
+        // listen event click
+        arrTask.forEach(element => {
+            element.addEventListener("click", function(e) {
+                console.log(e.target.checked, e.target.name)
+                arrStorage[date][Number(e.target.name)] = e.target.checked
+                localStorage.setItem('todo-list', JSON.stringify(arrStorage))
+            })
+        });
+        
+
+        // listen event change date
+        inputDate.addEventListener("change", function(e) {
+            console.log(e.target.value)
+            let dateChoose = e.target.value
+            date = dateChoose
+
+            if(arrStorage[dateChoose]) {
+                arrTask.forEach((item, i) => {
+                    console.log(item, i)
+                    item.checked = arrStorage[dateChoose][i]
+                })
+            } else {
+                arrStorage[dateChoose] = new Array(arrTask.length).fill(0)
+                localStorage.setItem('todo-list', JSON.stringify(arrStorage))
+
+                arrTask.forEach((item, i) => {
+                    console.log(item, i)
+                    item.checked = 0
+                })
+            }
+
+            let dateCurrent = formattedDate(new Date());
+            if(dateChoose == dateCurrent) {
+                renderDate.innerHTML = 'Today'
+            } else {
+                renderDate.innerHTML = dateChoose
+            }
+        })
+    }
+</script>
+</html>
